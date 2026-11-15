@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bitman · TradingView market-structure indicator</title>
+<meta property="og:title" content="Bitman · TradingView market-structure indicator">
+<meta property="og:image" content="https://franvzla.github.io/cl01/bitman/banner.jpg">
+<meta name="description" content="Bitman: price structure, 4 confirmation pillars and impulse-pullback timing on every timeframe. No repainting, honest limits, built-in signal audit.">
+<style>
+:root{--bg:#05080F;--panel:#0A0F1C;--ink:#DDF7FF;--muted:#7F8DA3;--cyan:#00E5FF;--fuch:#FF2BD6;--vio:#9D4DFF;--amb:#FFB300;--line:#1A2236}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:radial-gradient(1200px 600px at 80% -10%,#9D4DFF22,transparent 60%),radial-gradient(900px 500px at -10% 10%,#00E5FF18,transparent 60%),var(--bg);color:var(--ink);font:16px/1.6 Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+a{color:var(--cyan)}.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+nav{display:flex;justify-content:space-between;align-items:center;padding:18px 0}
+.logo{font-weight:800;letter-spacing:.08em}.logo span{color:var(--cyan)}
+.lang{display:flex;gap:6px}.lang button{background:transparent;border:1px solid var(--line);color:var(--muted);padding:6px 12px;border-radius:999px;cursor:pointer;font:inherit;font-size:13px}
+.lang button.on{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 12px #00E5FF44}
+.hero{padding:56px 0 30px;display:grid;grid-template-columns:1.15fr .85fr;gap:36px;align-items:center}
+h1{font-size:46px;line-height:1.1;margin:0 0 14px;letter-spacing:-.02em}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--cyan),var(--vio),var(--fuch));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:#B7C6DA;font-size:18px;max-width:560px}
+.cta{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+.btn{display:inline-block;padding:12px 20px;border-radius:10px;font-weight:700;text-decoration:none;border:1px solid var(--cyan);color:var(--bg);background:var(--cyan);box-shadow:0 0 24px #00E5FF55}
+.btn.ghost{background:transparent;color:var(--cyan);box-shadow:none}
+.ph{display:block;font-size:11px;font-weight:600;color:var(--amb);letter-spacing:.06em;margin-top:6px}
+.chip{display:inline-block;font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted);margin:0 6px 6px 0}
+.card{background:linear-gradient(180deg,#0C1324,#080D19);border:1px solid var(--line);border-radius:16px;padding:22px}
+.mock{font:13px/1.5 ui-monospace,Menlo,monospace}
+.mock .row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #1A2236}
+.c{color:var(--cyan)}.f{color:var(--fuch)}.v{color:var(--vio)}.a{color:var(--amb)}.m{color:var(--muted)}
+section{padding:46px 0;border-top:1px solid #0F1626}
+h2{font-size:28px;margin:0 0 8px}.lead{color:var(--muted);margin:0 0 24px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid .card h3{margin:0 0 6px;font-size:17px}.grid .card p{margin:0;color:#B7C6DA;font-size:15px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;vertical-align:middle}
+table{width:100%;border-collapse:collapse;font-size:15px}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:right}th:first-child,td:first-child{text-align:left}th{color:var(--muted);font-weight:600}
+.note{font-size:14px;color:var(--muted)}
+.warn{border:1px solid #FFB30055;background:#FFB3000D;border-radius:12px;padding:14px 16px;color:#F5DFAE;font-size:14px}
+.price{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.price .card{text-align:center}.amt{font-size:36px;font-weight:800;margin:8px 0}.amt small{font-size:15px;color:var(--muted);font-weight:500}
+.price .best{border-color:var(--vio);box-shadow:0 0 30px #9D4DFF33}
+details{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:10px;background:#0A0F1C}
+summary{cursor:pointer;font-weight:600}details p{color:#B7C6DA;margin:10px 0 0}
+footer{padding:36px 0 60px;color:var(--muted);font-size:13px;border-top:1px solid #0F1626}
+.badge{font-size:11px;letter-spacing:.12em;color:var(--amb);border:1px dashed var(--amb);padding:3px 8px;border-radius:6px}
+[data-es]{}
+@media(max-width:820px){.hero,.grid,.price{grid-template-columns:1fr}h1{font-size:34px}}
+figure{margin:0}figure img{width:100%;max-width:100%;height:auto;border:1px solid var(--line);border-radius:12px;display:block}.hero>div{min-width:0}.shots{display:grid;grid-template-columns:1fr 1fr;gap:16px}.shots figure{margin:0}.shots img,.wide img{width:100%;border:1px solid var(--line);border-radius:12px;display:block}figcaption{font-size:13px;color:var(--muted);margin-top:6px}.wide{margin:0 0 16px}@media(max-width:820px){.shots{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav>
+  <div class="logo"><a href="../" style="color:inherit;text-decoration:none">BIT<span>MAN</span></a></div>
+  <div class="lang"><button id="bEN" class="on" onclick="setLang('en')">EN</button><button id="bES" onclick="setLang('es')">ES</button></div>
+</nav>
+<header class="hero">
+  <div>
+    <div><span class="chip">TradingView · Invite-only</span><span class="chip" data-en="1m → Monthly" data-es="1m → Mensual">1m → Monthly</span><span class="chip" data-en="No repainting" data-es="Sin repintado">No repainting</span></div>
+    <h1 data-en="Read the &lt;em&gt;structure&lt;/em&gt;.&lt;br&gt;Enter on the pullback." data-es="Lee la &lt;em&gt;estructura&lt;/em&gt;.&lt;br&gt;Entra en el retroceso.">Read the <em>structure</em>.<br>Enter on the pullback.</h1>
+    <p class="sub" data-en="Bitman combines market structure, four confirmation pillars and impulse → pullback timing. Every signal comes with an entry, a structural stop and a target, on any timeframe." data-es="Bitman combina estructura de mercado, cuatro pilares de confirmación y el timing impulso → retroceso. Cada señal trae entrada, stop estructural y objetivo, en cualquier temporalidad.">Bitman combines market structure, four confirmation pillars and impulse → pullback timing. Every signal comes with an entry, a structural stop and a target, on any timeframe.</p>
+    <div class="cta">
+      <a class="btn" href="https://whop.com/checkout/plan_xrKkwPnuSbtco" target="_blank" rel="noopener" data-en="Start 7-day free trial" data-es="Prueba 7 días gratis">Start 7-day free trial</a>
+      <a class="btn ghost" href="#audit" data-en="See the signal audit" data-es="Ver la auditoría de señales">See the signal audit</a>
+    </div>
+  </div>
+  <div><figure><img src="banner.jpg" alt="Bitman brand illustration (not a real chart)." loading="lazy"><figcaption data-en="Bitman brand illustration (not a real chart)." data-es="Ilustración de marca de Bitman (no es un gráfico real).">Bitman brand illustration (not a real chart).</figcaption></figure></div>
+</header>
+<section id="how">
+  <h2 data-en="How it works" data-es="Cómo funciona">How it works</h2>
+  <p class="lead" data-en="Fixed rules, evaluated on confirmed bar closes." data-es="Reglas fijas, evaluadas al cierre de vela confirmado.">Fixed rules, evaluated on confirmed bar closes.</p>
+  <div class="grid"><div class="card"><h3><span class="dot" style="background:var(--cyan)"></span><span data-en="1 · Structure" data-es="1 · Estructura">1 · Structure</span></h3><p data-en="HH/HL/LH/LL swings, BOS and CHoCH, range boxes, H&amp;amp;S and inverse H&amp;amp;S, double tops and bottoms, supply and demand zones. The last event sets the bias." data-es="Swings HH/HL/LH/LL, BOS y CHoCH, cajas de rango, HCH e HCH invertido, doble techo y doble suelo, zonas de oferta y demanda. El último evento fija el sesgo.">HH/HL/LH/LL swings, BOS and CHoCH, range boxes, H&amp;S and inverse H&amp;S, double tops and bottoms, supply and demand zones. The last event sets the bias.</p></div><div class="card"><h3><span class="dot" style="background:var(--vio)"></span><span data-en="2 · Four pillars" data-es="2 · Cuatro pilares">2 · Four pillars</span></h3><p data-en="RSI, Awesome Oscillator, ADX/DI and a simplified Koncorde. A signal needs the structure in favour and at least 3 of 4 pillars." data-es="RSI, Awesome Oscillator, ADX/DI y un Koncorde simplificado. La señal exige la estructura a favor y al menos 3 de 4 pilares.">RSI, Awesome Oscillator, ADX/DI and a simplified Koncorde. A signal needs the structure in favour and at least 3 of 4 pillars.</p></div><div class="card"><h3><span class="dot" style="background:var(--amb)"></span><span data-en="3 · Impulse → pullback" data-es="3 · Impulso → retroceso">3 · Impulse → pullback</span></h3><p data-en="An impulse breaks a level. If price is extended, an amber diamond says do not chase; Bitman waits for the pullback and the resumption close." data-es="Un impulso rompe un nivel. Si el precio está extendido, un rombo ámbar dice no perseguir; Bitman espera el retroceso y el cierre de retoma.">An impulse breaks a level. If price is extended, an amber diamond says do not chase; Bitman waits for the pullback and the resumption close.</p></div><div class="card"><h3><span class="dot" style="background:var(--fuch)"></span><span data-en="4 · Declared stop rules" data-es="4 · Reglas de stop declaradas">4 · Declared stop rules</span></h3><p data-en="Structural SL plus a 0.25 ATR buffer, never closer than 0.5 ATR. If it needs more than 4 ATR there is no signal: the stop is never shortened." data-es="SL estructural más un colchón de 0,25 ATR, nunca a menos de 0,5 ATR. Si necesita más de 4 ATR no hay señal: el stop nunca se acorta.">Structural SL plus a 0.25 ATR buffer, never closer than 0.5 ATR. If it needs more than 4 ATR there is no signal: the stop is never shortened.</p></div><div class="card"><h3><span class="dot" style="background:var(--cyan)"></span><span data-en="5 · Every timeframe" data-es="5 · Todas las temporalidades">5 · Every timeframe</span></h3><p data-en="Structure and timing parameters adapt automatically from 1 minute to monthly. Signals on confirmed closes with confirmed pivots: no repainting." data-es="Los parámetros de estructura y timing se adaptan solos de 1 minuto a mensual. Señales al cierre confirmado y con pivotes confirmados: sin repintado.">Structure and timing parameters adapt automatically from 1 minute to monthly. Signals on confirmed closes with confirmed pivots: no repainting.</p></div><div class="card"><h3><span class="dot" style="background:var(--vio)"></span><span data-en="6 · Signal audit" data-es="6 · Auditoría de señales">6 · Signal audit</span></h3><p data-en="Optional table that measures how far price travelled after each past signal (+1/+2/+3 ATR, MFE, SL first). It does not change signals." data-es="Tabla opcional que mide cuánto recorrió el precio tras cada señal pasada (+1/+2/+3 ATR, MFE, SL primero). No cambia las señales.">Optional table that measures how far price travelled after each past signal (+1/+2/+3 ATR, MFE, SL first). It does not change signals.</p></div></div>
+</section>
+<section id="charts">
+  <h2 data-en="Real charts" data-es="Gráficos reales">Real charts</h2>
+  <p class="lead" data-en="Real TradingView captures of the development build (Spanish interface). Other scripts (CL-01, CrucEMA) were also on the chart, so it looks busier than Bitman alone. The commercial version defaults to English." data-es="Capturas reales de TradingView de la versión de desarrollo (interfaz en español). En el gráfico también estaban otros scripts (CL-01, CrucEMA), por eso se ve más cargado que Bitman solo. La versión comercial viene en inglés por defecto.">Real TradingView captures of the development build (Spanish interface). Other scripts (CL-01, CrucEMA) were also on the chart, so it looks busier than Bitman alone. The commercial version defaults to English.</p>
+  <div class="wide"><figure><img src="chart_btc_1d.jpg" alt="BTCUSDT 1D (Binance): structure, zones, ranges and the latest signal label." loading="lazy"><figcaption data-en="BTCUSDT 1D (Binance): structure, zones, ranges and the latest signal label." data-es="BTCUSDT 1D (Binance): estructura, zonas, rangos y la etiqueta de la última señal.">BTCUSDT 1D (Binance): structure, zones, ranges and the latest signal label.</figcaption></figure></div>
+  <div class="shots">
+    <figure><img src="chart_btc_4h.jpg" alt="BTCUSDT 4H: the same rules on a lower timeframe." loading="lazy"><figcaption data-en="BTCUSDT 4H: the same rules on a lower timeframe." data-es="BTCUSDT 4H: las mismas reglas en una temporalidad menor.">BTCUSDT 4H: the same rules on a lower timeframe.</figcaption></figure>
+    <figure><img src="chart_btc_5m.jpg" alt="BTCUSDT 5m: Auto profile adapts pivots and timing." loading="lazy"><figcaption data-en="BTCUSDT 5m: Auto profile adapts pivots and timing." data-es="BTCUSDT 5m: el perfil Auto adapta pivotes y timing.">BTCUSDT 5m: Auto profile adapts pivots and timing.</figcaption></figure>
+  </div>
+</section>
+<section id="audit">
+  <h2 data-en="Signal audit: did the move happen?" data-es="Auditoría de señales: ¿se dio el movimiento?">Signal audit: did the move happen?</h2>
+  <p class="lead" data-en="Share of signals whose maximum favourable travel, within the next 20 closed bars measured from the signal close, reached each level. Author&#x27;s run with default settings on Binance BTCUSDT and ETHUSDT. Longs / shorts." data-es="Porcentaje de señales cuyo recorrido máximo a favor, en las 20 velas cerradas siguientes y medido desde el cierre de la señal, alcanzó cada nivel. Ejecución del autor con los ajustes por defecto en BTCUSDT y ETHUSDT de Binance. Largos / cortos.">Share of signals whose maximum favourable travel, within the next 20 closed bars measured from the signal close, reached each level. Author's run with default settings on Binance BTCUSDT and ETHUSDT. Longs / shorts.</p>
+  <div class="card"><table>
+    <tr><th data-en="Symbol / TF" data-es="Símbolo / TF">Symbol / TF</th><th data-en="Signals L/S" data-es="Señales L/C">Signals L/S</th><th>+1 ATR</th><th>+2 ATR</th><th data-en="SL first" data-es="SL primero">SL first</th></tr>
+    <tr><td>BTC 1D</td><td>27 / 33</td><td>74% / 70%</td><td>48% / 36%</td><td>19% / 12%</td></tr><tr><td>BTC 4H</td><td>152 / 146</td><td>62% / 69%</td><td>38% / 37%</td><td>26% / 18%</td></tr><tr><td>BTC 1H</td><td>160 / 135</td><td>72% / 64%</td><td>50% / 44%</td><td>21% / 36%</td></tr><tr><td>ETH 1D</td><td>21 / 28</td><td>76% / 79%</td><td>43% / 54%</td><td>14% / 14%</td></tr><tr><td>ETH 4H</td><td>154 / 155</td><td>64% / 66%</td><td>35% / 43%</td><td>23% / 24%</td></tr>
+  </table></div>
+  <p class="warn" style="margin-top:16px" data-en="&lt;b&gt;Historical price travel, not a trading result.&lt;/b&gt; These numbers say how often price moved in the signal direction at some point, not whether a trade made money: a move that reached +2 ATR may have hit the stop first or given it all back. Daily samples are small (fewer than 35 signals per side). With the default exits, the author&amp;#39;s BTC 4H test was net negative. Past behaviour does not guarantee future results." data-es="&lt;b&gt;Recorrido histórico del precio, no un resultado de trading.&lt;/b&gt; Indica con qué frecuencia el precio se movió a favor de la señal en algún momento, no si una operación ganó dinero: un movimiento que llegó a +2 ATR pudo tocar antes el stop o devolverlo todo. Las muestras en diario son pequeñas (menos de 35 señales por lado). Con las salidas por defecto, la prueba del autor en BTC 4H dio resultado neto negativo. El comportamiento pasado no garantiza resultados futuros."><b>Historical price travel, not a trading result.</b> These numbers say how often price moved in the signal direction at some point, not whether a trade made money: a move that reached +2 ATR may have hit the stop first or given it all back. Daily samples are small (fewer than 35 signals per side). With the default exits, the author&#39;s BTC 4H test was net negative. Past behaviour does not guarantee future results.</p>
+  <div class="shots">
+    <figure><img src="audit_btc_1d.jpg" alt="BTCUSDT 1D with the audit on: dotted line from each signal to its maximum favourable point." loading="lazy"><figcaption data-en="BTCUSDT 1D with the audit on: dotted line from each signal to its maximum favourable point." data-es="BTCUSDT 1D con la auditoría activa: línea punteada desde cada señal hasta su punto máximo a favor.">BTCUSDT 1D with the audit on: dotted line from each signal to its maximum favourable point.</figcaption></figure>
+    <figure><img src="audit_table_btc_4h.png" alt="The audit table on BTCUSDT 4H (real capture, Spanish interface)." loading="lazy"><figcaption data-en="The audit table on BTCUSDT 4H (real capture, Spanish interface)." data-es="La tabla de auditoría en BTCUSDT 4H (captura real, interfaz en español).">The audit table on BTCUSDT 4H (real capture, Spanish interface).</figcaption></figure>
+  </div>
+</section>
+<section id="limits">
+  <h2 data-en="Limitations" data-es="Límites">Limitations</h2>
+  <div class="card"><ul style="margin:0;padding-left:20px;color:#B7C6DA">
+    <li data-en="Pivot lag: a swing is only known N bars after it happens (5 on 1H, 3 on daily in Auto)." data-es="Retraso del pivote: un swing solo se conoce N velas después (5 en 1H y 3 en diario en Auto).">Pivot lag: a swing is only known N bars after it happens (5 on 1H, 3 on daily in Auto).</li>
+    <li data-en="The indicator simulates trades with OHLC; if SL and target fall in the same bar, the SL is assumed first." data-es="El indicador simula con OHLC; si SL y objetivo caen en la misma vela, se asume el SL primero.">The indicator simulates trades with OHLC; if SL and target fall in the same bar, the SL is assumed first.</li>
+    <li data-en="Koncorde needs volume; without it that pillar is weaker." data-es="El Koncorde necesita volumen; sin él ese pilar es más débil.">Koncorde needs volume; without it that pillar is weaker.</li>
+    <li data-en="Patterns are geometric rules on pivots. Weekly and monthly charts have few signals." data-es="Los patrones son reglas geométricas sobre pivotes. Semanal y mensual tienen pocas señales.">Patterns are geometric rules on pivots. Weekly and monthly charts have few signals.</li>
+    <li data-en="Auto parameters are heuristics, not optimised on results. No profits are promised." data-es="Los parámetros Auto son heurísticos, no optimizados con resultados. No se promete ganancia.">Auto parameters are heuristics, not optimised on results. No profits are promised.</li>
+  </ul></div>
+</section>
+<section id="pricing">
+  <h2 data-en="Pricing" data-es="Precios">Pricing</h2>
+  <p class="lead" data-en="7-day free trial on every plan. Cancel anytime." data-es="Prueba gratis de 7 días en todos los planes. Cancela cuando quieras.">7-day free trial on every plan. Cancel anytime.</p>
+  <div class="price">
+    <div class="card"><div class="m" data-en="Monthly" data-es="Mensual">Monthly</div><div class="amt">$24 <small data-en="/ month" data-es="/ mes">/ month</small></div><a class="btn ghost" href="https://whop.com/checkout/plan_xrKkwPnuSbtco" target="_blank" rel="noopener" data-en="Start trial" data-es="Empezar prueba">Start trial</a></div>
+    <div class="card best"><div class="v" data-en="Annual · best value" data-es="Anual · mejor precio">Annual · best value</div><div class="amt">$179 <small data-en="/ year" data-es="/ año">/ year</small></div><div class="note" data-en="≈ $14.92 / month" data-es="≈ 14,92 $ / mes">≈ $14.92 / month</div><a class="btn" href="https://whop.com/checkout/plan_dGTSGI2TiRStV" target="_blank" rel="noopener" data-en="Start trial" data-es="Empezar prueba">Start trial</a></div>
+    <div class="card"><div class="m" data-en="Quarterly" data-es="Trimestral">Quarterly</div><div class="amt">$59 <small data-en="/ 3 months" data-es="/ 3 meses">/ 3 months</small></div><a class="btn ghost" href="https://whop.com/checkout/plan_rLzjVia5eShxW" target="_blank" rel="noopener" data-en="Start trial" data-es="Empezar prueba">Start trial</a></div>
+  </div>
+  <p class="note" data-en="After checkout you enter your TradingView username; access is added within 24 hours. Prices in USD; taxes may apply." data-es="Tras pagar indicas tu usuario de TradingView; el acceso se añade en menos de 24 horas. Precios en USD; pueden aplicarse impuestos.">After checkout you enter your TradingView username; access is added within 24 hours. Prices in USD; taxes may apply.</p>
+  <p class="note"><a href="https://whop.com/francisco-santiago/bitman/" target="_blank" rel="noopener" data-en="See all plans on Whop →" data-es="Ver todos los planes en Whop →">See all plans on Whop →</a></p>
+</section>
+<section id="faq">
+  <h2 data-en="FAQ" data-es="Preguntas frecuentes">FAQ</h2>
+  <details><summary data-en="Does it repaint?" data-es="¿Repinta?">Does it repaint?</summary><p data-en="No. Signals are decided on confirmed closes using confirmed pivots. Swing labels and patterns are drawn at the pivot bar but appear only after confirmation (pivot lag), which is shown in the tooltips." data-es="No. Las señales se deciden al cierre confirmado con pivotes confirmados. Las etiquetas de swing y los patrones se dibujan en la vela del pivote pero aparecen solo tras confirmarse (retraso del pivote), y así lo indican los tooltips.">No. Signals are decided on confirmed closes using confirmed pivots. Swing labels and patterns are drawn at the pivot bar but appear only after confirmation (pivot lag), which is shown in the tooltips.</p></details><details><summary data-en="Is it profitable?" data-es="¿Es rentable?">Is it profitable?</summary><p data-en="No profits are promised. The audit shows price often moved in the signal direction, but with the default exits the author&#x27;s BTC 4H test was net negative. Test it yourself and pick exits that suit you." data-es="No se promete ganancia. La auditoría muestra que el precio a menudo se movió a favor, pero con las salidas por defecto la prueba del autor en BTC 4H dio resultado neto negativo. Pruébalo tú y elige las salidas que te encajen.">No profits are promised. The audit shows price often moved in the signal direction, but with the default exits the author's BTC 4H test was net negative. Test it yourself and pick exits that suit you.</p></details><details><summary data-en="Which markets?" data-es="¿Qué mercados?">Which markets?</summary><p data-en="Any symbol with standard candles. Koncorde needs volume; on symbols without volume that pillar is weaker. The author&#x27;s audit used BTC and ETH." data-es="Cualquier símbolo con velas estándar. El Koncorde necesita volumen; en símbolos sin volumen ese pilar es más débil. La auditoría del autor usó BTC y ETH.">Any symbol with standard candles. Koncorde needs volume; on symbols without volume that pillar is weaker. The author's audit used BTC and ETH.</p></details><details><summary data-en="Do I need a paid TradingView plan?" data-es="¿Necesito TradingView de pago?">Do I need a paid TradingView plan?</summary><p data-en="No, invite-only scripts work on any TradingView account. Alerts on indicators require a paid TradingView plan." data-es="No, los scripts invite-only funcionan en cualquier cuenta. Las alertas de indicadores requieren un plan de pago de TradingView.">No, invite-only scripts work on any TradingView account. Alerts on indicators require a paid TradingView plan.</p></details><details><summary data-en="Can I get a refund?" data-es="¿Puedo pedir reembolso?">Can I get a refund?</summary><p data-en="Use the 7-day free trial first. The first payment of a quarterly or annual plan is refundable within 7 days; renewals are not, except duplicate charges. Cancel anytime." data-es="Usa primero la prueba de 7 días. El primer pago de un plan trimestral o anual se reembolsa en 7 días; las renovaciones no, salvo cobros duplicados. Cancela cuando quieras.">Use the 7-day free trial first. The first payment of a quarterly or annual plan is refundable within 7 days; renewals are not, except duplicate charges. Cancel anytime.</p></details>
+</section>
+<section id="risk">
+  <div class="warn"><b data-en="Risk disclaimer." data-es="Aviso de riesgo.">Risk disclaimer.</b> <span data-en="Bitman is a technical-analysis tool for educational and informational purposes only. It is not financial, investment or trading advice. Trading carries a high risk of loss. Audit statistics describe historical price movement, are not trading results and do not guarantee future results. You are solely responsible for your decisions. The author is not a registered investment adviser." data-es="Bitman es una herramienta de análisis técnico con fines educativos e informativos. No es asesoramiento financiero, de inversión ni de trading. Operar conlleva un alto riesgo de pérdida. Las estadísticas de la auditoría describen el movimiento histórico del precio, no son resultados de trading y no garantizan resultados futuros. Eres el único responsable de tus decisiones. El autor no es asesor de inversiones registrado.">Bitman is a technical-analysis tool for educational and informational purposes only. It is not financial, investment or trading advice. Trading carries a high risk of loss. Audit statistics describe historical price movement, are not trading results and do not guarantee future results. You are solely responsible for your decisions. The author is not a registered investment adviser.</span></div>
+</section>
+</div>
+<footer><div class="wrap">
+  <p>© 2026 Francisco Santiago · <a href="terms.pdf" target="_blank" rel="noopener" data-en="Terms" data-es="Términos">Terms</a> · <a href="refund_policy.pdf" target="_blank" rel="noopener" data-en="Refund policy" data-es="Política de reembolso">Refund policy</a> · <a href="https://whop.com/francisco-santiago/bitman/" target="_blank" rel="noopener" data-en="Contact / support on Whop" data-es="Contacto / soporte en Whop">Contact / support on Whop</a> · <a href="../" data-en="CL-01 Squeeze Breakout" data-es="CL-01 Squeeze Breakout">CL-01 Squeeze Breakout</a></p>
+  <p data-en="TradingView is a trademark of TradingView, Inc. This product is not affiliated with or endorsed by TradingView." data-es="TradingView es una marca de TradingView, Inc. Este producto no está afiliado ni respaldado por TradingView.">TradingView is a trademark of TradingView, Inc. This product is not affiliated with or endorsed by TradingView.</p>
+</div></footer>
+<script>
+function setLang(l){document.documentElement.lang=l;document.querySelectorAll('[data-en]').forEach(function(e){e.innerHTML=e.getAttribute('data-'+l)});document.getElementById('bEN').classList.toggle('on',l==='en');document.getElementById('bES').classList.toggle('on',l==='es');try{localStorage.setItem('cl01lang',l)}catch(e){}}
+(function(){var l=null;try{l=localStorage.getItem('cl01lang')}catch(e){}if(!l){l=(navigator.language||'en').slice(0,2)==='es'?'es':'en'}setLang(l)})();
+</script>
+</body>
+</html>
